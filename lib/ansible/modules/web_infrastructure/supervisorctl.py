@@ -127,6 +127,10 @@ def main():
     module = AnsibleModule(argument_spec=arg_spec, supports_check_mode=True)
 
     name = module.params['name']
+    is_all = False
+    if name == 'all':
+        is_all = True
+
     is_group = False
     if name.endswith(':'):
         is_group = True
@@ -179,19 +183,17 @@ def main():
             process_name = fields[0]
             status = fields[1]
 
-            if is_group:
+            if is_all:
+                matched.append((process_name, status))
+            elif is_group:
                 # If there is ':', this process must be in a group.
                 if ':' in process_name:
                     group = process_name.split(':')[0]
-                    if group != name:
-                        continue
-                else:
-                    continue
-            else:
-                if process_name != name:
-                    continue
+                    if group == name:
+                        matched.append((process_name, status))
+            elif process_name == name:
+                matched.append((process_name, status))
 
-            matched.append((process_name, status))
         return matched
 
     def take_action_on_processes(processes, status_filter, action, expected_result):
