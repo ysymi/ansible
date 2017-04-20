@@ -36,6 +36,7 @@ options:
       - The name of the supervisord program or group to manage.
       - The name will be taken as group name when it ends with a colon I(:)
       - Group support is only available in Ansible version 1.6 or later.
+      - All program support is only available in Ansible version 2.3 or later.
     required: true
     default: null
   config:
@@ -107,6 +108,11 @@ EXAMPLES = '''
     username: test
     password: testpass
     server_url: http://localhost:9001
+
+# Restart all programs and groups
+- supervisorctl:
+    name: all
+    state: restarted
 '''
 
 import os
